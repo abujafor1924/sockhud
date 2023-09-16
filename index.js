@@ -29,6 +29,7 @@ async function run() {
     //     await client.connect();
 
     const userCollection = client.db("dataSave").collection("user");
+    const categoryCollection = client.db("dataSave").collection("category");
     // Send a ping to confirm a successful connection
     app.get("/users", async (req, res) => {
       const result = await userCollection.find().toArray();
@@ -74,7 +75,6 @@ async function run() {
           role: "admin",
         },
       };
-
       const result = await userCollection.updateOne(filter, updateDoc);
       res.send(result);
     });
@@ -90,6 +90,37 @@ async function run() {
       const result = await userCollection.updateOne(query, updateDoc);
       res.send(result);
     });
+
+    app.delete("/users/:id", async (req, res) => {
+      const id = req.params.id;
+      // console.log(id);
+      const query = { _id: new ObjectId(id) };
+      //  console.log(query);
+      const result = await userCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // Category Section
+
+    app.get("/allCategory", async (req, res) => {
+      const result = await categoryCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.post("/addCategory", async (req, res) => {
+      const newItem = req.body;
+      const result = await categoryCollection.insertOne(newItem);
+      res.send(result);
+    });
+
+    app.delete("/allCategory/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await categoryCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // Product Section
 
     await client.db("admin").command({ ping: 1 });
     console.log(
