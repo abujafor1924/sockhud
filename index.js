@@ -30,6 +30,7 @@ async function run() {
 
     const userCollection = client.db("dataSave").collection("user");
     const categoryCollection = client.db("dataSave").collection("category");
+    const productCollection = client.db("dataSave").collection("product");
     // Send a ping to confirm a successful connection
     app.get("/users", async (req, res) => {
       const result = await userCollection.find().toArray();
@@ -121,6 +122,44 @@ async function run() {
     });
 
     // Product Section
+    app.get("/allProduct", async (req, res) => {
+      const result = await productCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.post("/addProduct", async (req, res) => {
+      const newProduct = req.body;
+      const result = await productCollection.insertOne(newProduct);
+      res.send(result);
+    });
+
+    app.patch("/allProductUpdate/:id", async (req, res) => {
+      const id = req.params.id;
+      const body = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const updatedDoc = {
+        $set: {
+          ...body,
+        },
+      };
+      const result = await productCollection.updateOne(filter, updatedDoc);
+      res.send(result);
+    });
+
+    app.delete("/allProduct/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await productCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    //  singale product view
+    app.get("/allProduct/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await productCollection.findOne(query);
+      res.send(result);
+    });
 
     await client.db("admin").command({ ping: 1 });
     console.log(
