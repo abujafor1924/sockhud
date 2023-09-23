@@ -127,6 +127,13 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/allProduct/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await productCollection.findOne(query);
+      res.send(result);
+    });
+
     app.post("/addProduct", async (req, res) => {
       const newProduct = req.body;
       const result = await productCollection.insertOne(newProduct);
@@ -154,12 +161,6 @@ async function run() {
     });
 
     //  singale product view
-    app.get("/allProduct/:id", async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: new ObjectId(id) };
-      const result = await productCollection.findOne(query);
-      res.send(result);
-    });
 
     await client.db("admin").command({ ping: 1 });
     console.log(
